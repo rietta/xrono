@@ -1,5 +1,7 @@
 // ---------- Schedule Modal
 
+$dashboard_base = "/timesheets/dashboard";
+
 // Setup the dialog
 $("#schedule_modal").dialog({ 
   modal: true,
@@ -35,7 +37,7 @@ $("#work_unit_client_id").change(function(){
   $("#work_unit_ticket_id").children().remove();
   $("#work_unit_ticket_id").append( new Option("Select a ticket",""))
   if(this.value != "") {
-    $.get("/dashboard/client", { id: this.value }, function(data){
+    $.get($dashboard_base + "/client", { id: this.value }, function(data){
       $.each(data, function(){
         $.each(this, function(k, v){
           me.append( new Option(v.name, v.id) )
@@ -51,7 +53,7 @@ $("#work_unit_project_id").change(function(){
   me.children().remove();
   me.append( new Option("Select a ticket","") )
   if(this.value != "") {
-    $.get("/dashboard/project", { id: this.value }, function(data){
+    $.get($dashboard_base + "/project", { id: this.value }, function(data){
       $.each(data, function(){
         $.each(this, function(k, v){
           me.append( new Option(v.name, v.id) )
@@ -141,7 +143,7 @@ $("#ticket_client_id").change(function(){
   $("#work_unit_ticket_id").children().remove();
   $("#work_unit_ticket_id").append( new Option("Select a ticket",""))
   if(this.value != "") {
-    $.get("/dashboard/client", { id: this.value }, function(data){
+    $.get($dashboard_base + "/client", { id: this.value }, function(data){
       $.each(data, function(){
         $.each(this, function(k, v){
           me.append( new Option(v.name, v.id) )
@@ -157,7 +159,7 @@ $("#ticket_project_id").change(function(){
   me.children().remove();
   me.append( new Option("Select a ticket","") )
   if(this.value != "") {
-    $.get("/dashboard/project", { id: this.value }, function(data){
+    $.get($dashboard_base + "/project", { id: this.value }, function(data){
       $.each(data, function(){
         $.each(this, function(k, v){
           me.append( new Option(v.name, v.id) )
