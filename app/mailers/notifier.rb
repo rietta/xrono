@@ -1,5 +1,5 @@
 class Notifier < ActionMailer::Base
-  default :from => "no-reply@xrono.org"
+  default :from => "no-reply@rietta.com"
 
   def daily(client)
     @client = client

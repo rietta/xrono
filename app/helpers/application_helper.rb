@@ -23,5 +23,7 @@ module ApplicationHelper
       start_date.end_of_week
     end
   end
+  
+  
 
 end

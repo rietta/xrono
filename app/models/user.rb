@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
                   :daily_target_hours
 
   validates_presence_of :first_name, :last_name
-  validates_length_of :middle_initial, :is => 1
+  validates_length_of :middle_initial, :is => 1, :allow_blank=>true
 
   has_many :work_units
   has_many :comments
