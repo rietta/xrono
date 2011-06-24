@@ -1,5 +1,6 @@
 %ul
   %li= link_to t(:home), root_path
+  %li= link_to t(:wiki), "/wiki/"
   %li= link_to t(:clients), clients_path
   - if admin?
     %li= link_to t(:users), admin_users_path
