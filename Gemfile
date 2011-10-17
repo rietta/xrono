@@ -9,7 +9,7 @@ gem 'gravtastic'
 gem 'haml', '~> 3.0.18', :require => 'haml'
 gem 'mysql2', '~> 0.2.0'
 gem "paperclip", "~> 2.3"
-gem 'rails', '3.0.3'
+gem 'rails', '3.0.10'
 gem 'thin', '~> 1.2.7'
 gem 'uuid', '~> 2.3.1'
 gem 'jquery-rails'
