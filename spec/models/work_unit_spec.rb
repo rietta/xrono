@@ -4,6 +4,7 @@ describe WorkUnit do
   let(:work_unit) { WorkUnit.make }
   let(:work_unit1) { WorkUnit.make }
   let(:work_unit2) { WorkUnit.make }
+  let(:site_settings) { SiteSettings.make }
 
   it { should have_many :comments }
   it { should belong_to :ticket }
@@ -131,6 +132,21 @@ describe WorkUnit do
     end
   end
 
+  describe ".hours" do
+    subject { WorkUnit.hours}
+
+    it "should not allow negative numbers" do
+      work_unit1.update_attribute(:hours, -1)
+      work_unit1.should_not be_valid
+    end
+
+    it "should not accept characters" do
+      work_unit1.update_attribute(:hours, "asdf#")
+      work_unit1.should_not be_valid
+    end
+  end
+
+
   describe '.pto' do
     subject { WorkUnit.pto }
 
@@ -168,7 +184,13 @@ describe WorkUnit do
     it 'should return a collection of work units with hours type "Overtime"' do
       should == [work_unit1]
     end
+
+    it 'should return true if hours type is overtime' do
+      work_unit1.overtime?.should == true
+    end
   end
+
+  
 
   describe '.normal' do
     subject { WorkUnit.normal }
@@ -210,6 +232,15 @@ describe WorkUnit do
       end
     end
   end
+
+#  describe '#not_send_email!' do
+#    context 'when there are NO contacts for the parent client who receive email' do
+#
+#      it 'should not send the email' do
+#        lambda { work_unit.send_email! }.should_not change(ActionMailer::Base.deliveries, :count).by(1)
+#      end
+#    end
+#  end
 
   describe '#email_list' do
     subject { work_unit.email_list }
@@ -411,4 +442,5 @@ describe WorkUnit do
       end
     end
   end
+
 end

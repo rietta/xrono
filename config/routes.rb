@@ -30,9 +30,15 @@ AssetTrackerTutorial::Application.routes.draw do
 
   resources :tickets, :except => [:index, :destroy] do
     resources :comments
+    resources :work_units
   end
 
-  resources :work_units, :except => [:index, :destroy] do
+  resources :work_units, :except => [:destroy, :create] do
+    collection do 
+      post :create_in_ticket
+      post :create_in_dashboard
+    end
+
     resources :comments
   end
 
@@ -64,5 +70,6 @@ AssetTrackerTutorial::Application.routes.draw do
     namespace :v1 do
       resources :clients
     end
+
   end
 end

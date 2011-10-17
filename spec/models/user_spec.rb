@@ -9,7 +9,6 @@ describe User do
 
   it { should validate_presence_of :first_name }
   it { should validate_presence_of :last_name }
-
   describe '.with_unpaid_work_units' do
     subject { User.with_unpaid_work_units }
 
@@ -65,6 +64,12 @@ describe User do
 
     it 'should return a collection of work units for the user scheduled on a given day' do
       user.work_units_for_day(Time.now).should == [work_unit1]
+    end
+
+    it "should sum up all work units' hours  for the user scheduled on a given day" do
+      work_unit1.update_attributes(:hours => 3)
+      work_unit2.update_attributes(:hours => 1, :scheduled_at => Time.now)
+      user.hours_entered_for_day(Time.now).should == 4
     end
   end
 
@@ -174,28 +179,71 @@ describe User do
   end
 
   describe 'target_hours_offset' do
-    subject { user.target_hours_offset(Time.now) }
+    subject { user.target_hours_offset(Date.current) }
 
-    before do
-      work_unit1.update_attributes(:hours => 2, :hours_type => 'Normal', :scheduled_at => '2011-01-01')
+    it 'should raise an error on non-date objects' do
+      lambda{ user.target_hours_offset(Time.now) }.should raise_error(RuntimeError)
     end
 
     it 'should calculate the hours a user needs to meet their daily target hours' do
-      pending()
-      should == something
+      should == 0.0
+    end
+  end
+
+  describe 'expected_hours' do
+    subject { user.expected_hours(Date.current).to_s }
+
+    before do
+      work_unit1.update_attributes(:hours => 2, :hours_type => 'Normal', :scheduled_at => Date.yesterday)
+    end
+
+    it 'should raise an error if not passed a date' do
+      lambda do
+        user.expected_hours(Time.now)
+      end.should raise_error(RuntimeError)
+    end
+
+    it 'should calculate the expected hours for a user' do
+      should =~ /\d+/
+    end
+
+    context 'user has been here all year' do
+      before do
+        work_unit1.update_attributes(:hours => 2, :hours_type => 'Normal', :scheduled_at => Date.current.years_ago(1))
+      end
+      it { should =~ /\d+/}
     end
   end
 
   describe 'percentage_work_for' do
-    subject { user.percentage_work_for(client, start_date, end_date) }
+    subject { user.percentage_work_for(Client.new, Date.yesterday, Date.current) }
 
-    before do
+    it 'should raise an exception if the client is not a Client' do
+      lambda do
+        user.percentage_work_for(User.new, Date.yesterday, Date.current)
+      end.should raise_error(RuntimeError)
+    end
+
+    it 'should raise an exception if the start_date is not a Date' do
+      lambda do
+        user.percentage_work_for(Client.new, 1.days.ago, Date.current)
+      end.should raise_error(RuntimeError)
+    end
+
+    it 'should raise an exception if the end_date is not a Date' do
+      lambda do
+        user.percentage_work_for(Client.new, Date.yesterday, Time.now)
+      end.should raise_error(RuntimeError)
+    end
+
+    it 'should not raise an exception if given the right parameter types' do
+      lambda do
+        user.percentage_work_for(client, start_date, end_date)
+      end.should_not raise_error(RuntimeError)
     end
 
     it 'should calculate the percentage of hours worked for a client as a percentage of all work done' do
-      pending()
-      should == something
+      should == 0
     end
   end
-
 end

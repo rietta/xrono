@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me,
                   :first_name, :last_name, :middle_initial, :full_width,
-                  :daily_target_hours
+                  :daily_target_hours, :expanded_calendar
 
   validates_presence_of :first_name, :last_name
   validates_length_of :middle_initial, :is => 1, :allow_blank=>true
@@ -41,6 +41,13 @@ class User < ActiveRecord::Base
     work_units.scheduled_between(time.beginning_of_week, time.end_of_week)
   end
 
+  def hours_entered_for_day(time)
+    hours = 0
+    work_units_for_day(time).each do |w|
+      hours += w.hours
+    end
+    hours
+  end
   def unpaid_work_units
     work_units.unpaid
   end
@@ -63,7 +70,7 @@ class User < ActiveRecord::Base
     SiteSettings.first.total_yearly_pto_per_user - work_units.pto.scheduled_between(time.beginning_of_year, time).sum(:hours)
   end
 
-  # TODO: refactor this mess, and add tests for it
+  # TODO: refactor this mess
   def expected_hours(date)
     raise "Date must be a date object" unless date.is_a?(Date)
     # no expected hours if the user has never worked
@@ -91,7 +98,7 @@ class User < ActiveRecord::Base
 
   def target_hours_offset(date)
     raise "Date must be a date object" unless date.is_a?(Date)
-    worked_hours = WorkUnit.for_user(self).scheduled_between(date.beginning_of_year, date.end_of_day).sum(:effective_hours)
+    worked_hours = WorkUnit.for_user(self).scheduled_between(date.beginning_of_year, date.end_of_day).sum(:hours)
     worked_hours - expected_hours(date)
   end
 
