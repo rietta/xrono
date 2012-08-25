@@ -23,11 +23,11 @@ Feature: Client Management
       |name 4|Active|
     When I go to the clients page
     Then I should see the following clients:
-      |Name|Initials|Projects|Tickets|Status|Edit|
-      |name 1||0|0|Active|Edit|
-      |name 2||0|0|Active|Edit|
-      |name 3||0|0|Active|Edit|
-      |name 4||0|0|Active|Edit|
+      |Name  |Initials       |Hours|Uninvoiced|Status|Recent Users|Edit|
+      |name 1|               |0.0    |0.0         |Active|            |Edit|
+      |name 2|               |0.0    |0.0         |Active|            |Edit|
+      |name 3|               |0.0    |0.0        |Active|            |Edit|
+      |name 4|               |0.0    |0.0         |Active|            |Edit|
     And I should see a link with text "New Client"
 
   Scenario: View a client as a non admin
@@ -45,6 +45,26 @@ Feature: Client Management
     When I am on the client's page
     Then I should see "Projects"
     And I should see a link with text "Edit"
+
+  Scenario: View inactive clients as a non admin
+    Given I am an authenticated user
+     When I am on the inactive clients page
+     Then I should see "Access denied."
+
+  Scenario: View inactive clients as a non admin
+    Given I am an authenticated user with an admin role
+     When I am on the inactive clients page
+     Then I should see "All Inactive Clients"
+
+  Scenario: View suspended clients as a non admin
+    Given I am an authenticated user
+     When I am on the suspended clients page
+     Then I should see "Access denied."
+
+  Scenario: View suspended clients as a non admin
+    Given I am an authenticated user with an admin role
+     When I am on the suspended clients page
+     Then I should see "All Suspended Clients"
 
   Scenario: Edit a client
     Given I am an authenticated user with an admin role
@@ -82,7 +102,6 @@ Feature: Client Management
     And I select "Active" from "Status"
     And I press "Create"
     Then I should see "name 1"
-    And I should see "Active"
 
   Scenario: Register new client as an admin - invalid
     Given I am an authenticated user with an admin role
@@ -93,5 +112,5 @@ Feature: Client Management
   Scenario: Register new client - the form
     Given I am an authenticated user with an admin role
     When I go to the new client page
-    Then I should see a link with text "Cancel" within ".actions"
+    Then I should see a link with text "Cancel" within the actions list
 

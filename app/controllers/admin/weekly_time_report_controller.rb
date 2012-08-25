@@ -9,6 +9,7 @@ class Admin::WeeklyTimeReportController < ApplicationController
     #redirect_unless_monday('/admin/weekly_time_report/', params[:id])
     redirect_unless_monday(admin_weekly_time_report_index_path, params[:id])
     @users = User.sort_by_name.select{|u| u.has_role?(:developer) && !u.locked }
+    @weekly_hours_sum = external_hours_for_chart(@users, :date => @start_date)
   end
 
 end
